@@ -69,6 +69,7 @@ set(client_SRCS
     folderstatusview.cpp
     folderwatcher.cpp
     folderwizard.cpp
+    foregroundbackground_interface.h
     generalsettings.cpp
     legalnotice.cpp
     ignorelisteditor.cpp
@@ -152,6 +153,8 @@ endif()
 IF( APPLE )
     list(APPEND client_SRCS cocoainitializer_mac.mm)
     list(APPEND client_SRCS socketapisocket_mac.mm)
+    list(APPEND client_SRCS foregroundbackground_mac.mm)
+    list(APPEND client_SRCS foregroundbackground_cocoa.mm)
     list(APPEND client_SRCS systray.mm)
 
     if(SPARKLE_FOUND AND BUILD_UPDATER)
@@ -166,6 +169,10 @@ IF( APPLE )
                 DESTINATION "${OWNCLOUD_OSX_BUNDLE}/Contents/Frameworks" USE_SOURCE_PERMISSIONS)
 
    endif()
+ELSEIF( WIN32 )
+    list(APPEND client_SRCS foregroundbackground_windows.cpp)
+ELSE()
+    list(APPEND client_SRCS foregroundbackground_fallback.cpp)
 ENDIF()
 
 IF( NOT WIN32 AND NOT APPLE )

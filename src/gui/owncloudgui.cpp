@@ -16,6 +16,7 @@
 #include "owncloudgui.h"
 #include "theme.h"
 #include "folderman.h"
+#include "foregroundbackground_interface.h"
 #include "progressdispatcher.h"
 #include "owncloudsetupwizard.h"
 #include "sharedialog.h"
@@ -526,6 +527,8 @@ void ownCloudGui::slotShowSettings()
     if (_settingsDialog.isNull()) {
         _settingsDialog = new SettingsDialog(this);
         _settingsDialog->setAttribute(Qt::WA_DeleteOnClose, true);
+        auto *fgbg = new ForegroundBackground();
+        _settingsDialog->installEventFilter(fgbg);
         _settingsDialog->show();
     }
     raiseDialog(_settingsDialog.data());
