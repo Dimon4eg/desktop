@@ -66,6 +66,9 @@ public:
     bool listFilesInPath(const QByteArray &path, const std::function<void(const SyncJournalFileRecord&)> &rowCallback);
     bool setFileRecord(const SyncJournalFileRecord &record);
 
+    void setLastSync(quint64 timestampInSeconds);
+    qint64 lastSync();
+
     bool deleteFileRecord(const QString &filename, bool recursively = false);
     bool updateFileRecordChecksum(const QString &filename,
         const QByteArray &contentChecksum,
@@ -418,6 +421,9 @@ private:
     SqlQuery _getDataFingerprintQuery;
     SqlQuery _setDataFingerprintQuery1;
     SqlQuery _setDataFingerprintQuery2;
+    SqlQuery _getLastSyncQuery;
+    SqlQuery _setLastSyncQuery1;
+    SqlQuery _setLastSyncQuery2;
     SqlQuery _getConflictRecordQuery;
     SqlQuery _setConflictRecordQuery;
     SqlQuery _deleteConflictRecordQuery;

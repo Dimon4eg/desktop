@@ -408,6 +408,12 @@ bool SyncJournalDb::checkConnect()
         return sqlFail(QStringLiteral("Create table metadata"), createQuery);
     }
 
+    createQuery.prepare("CREATE TABLE IF NOT EXISTS last_sync(time INTEGER(8));");
+
+    if (!createQuery.exec()) {
+        return sqlFail(QStringLiteral("Create table last_sync"), createQuery);
+    }
+
     createQuery.prepare("CREATE TABLE IF NOT EXISTS downloadinfo("
                         "path VARCHAR(4096),"
                         "tmpfile VARCHAR(4096),"
@@ -968,6 +974,45 @@ bool SyncJournalDb::setFileRecord(const SyncJournalFileRecord &_record)
         qCWarning(lcDb) << "Failed to connect database.";
         return false; // checkConnect failed.
     }
+}
+
+qint64 SyncJournalDb::lastSync()
+{
+    QMutexLocker locker(&_mutex);
+    if (!checkConnect()) {
+        return 0;
+    }
+
+    if (!_getLastSyncQuery.initOrReset(QByteArrayLiteral("SELECT time FROM last_sync"), _db))
+        return 0;
+
+    if (!_getLastSyncQuery.exec()) {
+        return 0;
+    }
+
+    if (!_getLastSyncQuery.next().hasData) {
+        return 0;
+    }
+
+    return _getLastSyncQuery.int64Value(0);
+}
+
+void SyncJournalDb::setLastSync(quint64 timestampInSeconds)
+{
+    QMutexLocker locker(&_mutex);
+    if (!checkConnect()) {
+        return;
+    }
+
+    if (!_setLastSyncQuery1.initOrReset(QByteArrayLiteral("DELETE FROM last_sync;"), _db)
+        || !_setLastSyncQuery2.initOrReset(QByteArrayLiteral("INSERT INTO last_sync (time) VALUES (?1);"), _db)) {
+        return;
+    }
+
+    _setLastSyncQuery1.exec();
+
+    _setLastSyncQuery2.bindValue(1, timestampInSeconds);
+    _setLastSyncQuery2.exec();
 }
 
 // TODO: filename -> QBytearray?
