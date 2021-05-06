@@ -330,7 +330,7 @@ void ProcessDirectoryJob::processFile(PathTuple path,
                               << " | e2eeMangledName: " << dbEntry.e2eMangledName() << "/" << serverEntry.e2eMangledName;
 
     if (localEntry.isValid()
-        && serverEntry.isValid()
+        && !serverEntry.isValid()
         && !dbEntry.isValid()
         && localEntry.modtime < _lastSyncTimestamp) {
         qCWarning(lcDisco) << "File" << path._original << "was modified before the last sync run and is not in the sync journal and server";

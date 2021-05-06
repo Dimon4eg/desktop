@@ -997,7 +997,7 @@ qint64 SyncJournalDb::lastSync()
     return _getLastSyncQuery.int64Value(0);
 }
 
-void SyncJournalDb::setLastSync(quint64 timestampInSeconds)
+void SyncJournalDb::setLastSync(qint64 timestampInSeconds)
 {
     QMutexLocker locker(&_mutex);
     if (!checkConnect()) {

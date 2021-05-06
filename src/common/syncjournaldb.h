@@ -66,7 +66,7 @@ public:
     bool listFilesInPath(const QByteArray &path, const std::function<void(const SyncJournalFileRecord&)> &rowCallback);
     bool setFileRecord(const SyncJournalFileRecord &record);
 
-    void setLastSync(quint64 timestampInSeconds);
+    void setLastSync(qint64 timestampInSeconds);
     qint64 lastSync();
 
     bool deleteFileRecord(const QString &filename, bool recursively = false);
